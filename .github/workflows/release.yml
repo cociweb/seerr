@@ -6,6 +6,8 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    
 
 permissions:
   contents: read
@@ -15,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  DOCKER_HUB: seerr/seerr
+  DOCKER_HUB: cociweb/seerr
 
 jobs:
   changelog:
