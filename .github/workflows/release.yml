@@ -114,7 +114,7 @@ jobs:
             type=semver,pattern={{raw}}
             type=semver,pattern=v{{major}}.{{minor}}
             type=semver,pattern=v{{major}}
-            ${{ steps.image-name.outputs.IMAGE_NAME }}:"latest"
+          flavor: latest=true
           labels: |
             org.opencontainers.image.created=${{ steps.ts.outputs.TIMESTAMP }}
 
