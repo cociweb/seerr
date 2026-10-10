@@ -29,6 +29,7 @@ const TMDB_SCAN_MAX_KEYS = 2000;
 // these tiers, and keys are prefixed by server url, so this is a few keys per server.
 const RADARR_MAX_KEYS = 64;
 const SONARR_MAX_KEYS = 64;
+const LIDARR_MAX_KEYS = 64;
 
 // One key per searched title, each holding twenty search hits.
 const RT_MAX_KEYS = 500;
