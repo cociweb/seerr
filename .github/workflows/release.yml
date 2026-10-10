@@ -156,7 +156,7 @@ jobs:
           - name: Resolve manifest digest
             id: digests
             run: |
-              DIGEST=$(docker buildx imagetools inspect "${{ env.DOCKER_HUB }}:${{ env.VERSION }}" --format '{{json .Manifest.Digest}}' | tr -d '"')
+              DIGEST=$(docker buildx imagetools inspect "ghcr.io/${{ github.repository }}:${{ env.VERSION }}" --format '{{json .Manifest.Digest}}' | tr -d '"')
               echo "IMAGE_DIGEST=$DIGEST" >> $GITHUB_OUTPUT
 
           - name: Also tag :latest (non-pre-release only)
