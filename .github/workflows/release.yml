@@ -150,25 +150,6 @@ jobs:
           labels: |
             org.opencontainers.image.created=${{ steps.ts.outputs.TIMESTAMP }}
 
-      - name: Build & Push (multi-arch)
-        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
-        with:
-          context: .
-          file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64
-          push: true
-          build-args: |
-            COMMIT_TAG=${{ github.sha }}
-            BUILD_VERSION=${{ env.VERSION }}
-            SOURCE_DATE_EPOCH=${{ steps.ts.outputs.TIMESTAMP }}
-          labels: ${{ steps.meta.outputs.labels }}
-          tags: ${{ steps.meta.outputs.tags }}
-          cache-from: |
-            type=gha,scope=linux/amd64
-            type=gha,scope=linux/arm64
-          cache-to: type=gha,mode=max
-          provenance: false
-
       - parallel:
           - name: Resolve manifest digest
             id: digests
