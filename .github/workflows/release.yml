@@ -162,10 +162,6 @@ jobs:
             if: ${{ !contains(env.VERSION, '-') }}
             run: |
               docker buildx imagetools create \
-                -t ${{ env.DOCKER_HUB }}:latest \
-                ${{ env.DOCKER_HUB }}:${{ env.VERSION }}
-
-              docker buildx imagetools create \
                 -t ghcr.io/${{ github.repository }}:latest \
                 ghcr.io/${{ github.repository }}:${{ env.VERSION }}
 
@@ -203,15 +199,12 @@ jobs:
       - name: Sign images
         run: |
           cosign sign --recursive "ghcr.io/${{ github.repository }}@${{ needs.publish.outputs.image_digest }}"
-          cosign sign --recursive "${{ env.DOCKER_HUB }}@${{ needs.publish.outputs.image_digest }}"
 
       - name: Generate SBOMs
         run: |
           trivy image --format cyclonedx --output seerr-ghcr-image-${{ env.VERSION }}.sbom \
             "ghcr.io/${{ github.repository }}@${{ needs.publish.outputs.image_digest }}"
 
-          trivy image --format cyclonedx --output seerr-dockerhub-image-${{ env.VERSION }}.sbom \
-            "${{ env.DOCKER_HUB }}@${{ needs.publish.outputs.image_digest }}"
 
       - name: Attest SBOMs
         run: |
@@ -220,10 +213,6 @@ jobs:
             --predicate seerr-ghcr-image-${{ env.VERSION }}.sbom \
             "ghcr.io/${{ github.repository }}@${{ needs.publish.outputs.image_digest }}"
 
-          cosign attest \
-            --type cyclonedx \
-            --predicate seerr-dockerhub-image-${{ env.VERSION }}.sbom \
-            "${{ env.DOCKER_HUB }}@${{ needs.publish.outputs.image_digest }}"
 
       - name: Upload SBOMs
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -252,10 +241,6 @@ jobs:
                 --certificate-identity "https://github.com/${{ github.workflow_ref }}" \
                 --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
 
-              cosign verify "${{ env.DOCKER_HUB }}@${{ needs.publish.outputs.image_digest }}" \
-                --certificate-identity "https://github.com/${{ github.workflow_ref }}" \
-                --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
-
           - name: Verify attestations
             run: |
               cosign verify-attestation "ghcr.io/${{ github.repository }}@${{ needs.publish.outputs.image_digest }}" \
@@ -263,10 +248,6 @@ jobs:
                 --certificate-identity "https://github.com/${{ github.workflow_ref }}" \
                 --certificate-oidc-issuer "https://token.actions.githubusercontent.com" > /dev/null
 
-                cosign verify-attestation "${{ env.DOCKER_HUB }}@${{ needs.publish.outputs.image_digest }}" \
-                --type cyclonedx \
-                --certificate-identity "https://github.com/${{ github.workflow_ref }}" \
-                --certificate-oidc-issuer "https://token.actions.githubusercontent.com" > /dev/null
 
   publish-release:
     name: Publish release
